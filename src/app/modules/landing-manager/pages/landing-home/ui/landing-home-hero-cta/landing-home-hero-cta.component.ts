@@ -1,17 +1,28 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-landing-home-hero-cta',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <button
-      class=" flex gap-10 px-10 py-5 items-center bg-light-dark rounded-xl text-white text-2xl pb"
+      (click)="scrollToDescription()"
+      class="flex items-center justify-between 
+             gap-3 sm:gap-5 md:gap-8 lg:gap-10
+             px-5 sm:px-6 md:px-8 lg:px-10 
+             py-3 sm:py-4 md:py-5
+             bg-light-dark rounded-lg sm:rounded-xl
+             text-white 
+             text-lg sm:text-xl md:text-2xl
+             transition-all duration-300 ease-in-out
+             hover:bg-opacity-90 hover:scale-105
+             active:scale-95 focus:outline-none"
     >
-      <p>!Conocenos!</p>
+      <p>¡Conócenos!</p>
 
       <svg
-        width="47"
-        height="44"
+        class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 arrow-animation"
         viewBox="0 0 47 44"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -53,6 +64,73 @@ import { Component } from '@angular/core';
       </svg>
     </button>
   `,
-  styles: ``,
+  styles: `
+    :host {
+      display: block;
+    }
+
+    @keyframes subtleArrowBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(3px);
+      }
+    }
+
+    .arrow-animation {
+      animation: subtleArrowBounce 2s ease-in-out infinite;
+    }
+
+    button:hover .arrow-animation {
+      animation-duration: 1.5s;
+    }
+  `,
 })
-export class LandingHomeHeroCtaComponent {}
+export class LandingHomeHeroCtaComponent {
+  // Método para desplazarse a la sección de descripción
+  scrollToDescription(): void {
+    const element = document.getElementById('contact_us');
+    if (element) {
+      this.smoothScrollTo(element);
+    }
+  }
+
+  // Implementación personalizada de scroll suave con más control sobre la animación
+  private smoothScrollTo(element: HTMLElement): void {
+    const startPosition = window.pageYOffset;
+    const targetPosition =
+      element.getBoundingClientRect().top + window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 1200; // Mayor duración para scroll más suave (milisegundos)
+    let startTime: number | null = null;
+
+    function animation(currentTime: number) {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = easeInOutQuart(
+        timeElapsed,
+        startPosition,
+        distance,
+        duration
+      );
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+
+    // Función de aceleración para una animación más suave
+    function easeInOutQuart(
+      t: number,
+      b: number,
+      c: number,
+      d: number
+    ): number {
+      t /= d / 2;
+      if (t < 1) return (c / 2) * t * t * t * t + b;
+      t -= 2;
+      return (-c / 2) * (t * t * t * t - 2) + b;
+    }
+
+    requestAnimationFrame(animation);
+  }
+}

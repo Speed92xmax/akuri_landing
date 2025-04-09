@@ -6,6 +6,7 @@ import { LandingHomeFooterComponent } from './ui/landing-home-footer/landing-hom
 
 @Component({
   selector: 'app-landing-home',
+  standalone: true,
   imports: [
     LandingHomeHeroComponent,
     LandingHomeDescriptionComponent,
@@ -20,6 +21,6 @@ import { LandingHomeFooterComponent } from './ui/landing-home-footer/landing-hom
       <app-landing-home-footer />
     </section>
   `,
-  styles: ``,
+  styles: [],
 })
 export class LandingHomeComponent {}
